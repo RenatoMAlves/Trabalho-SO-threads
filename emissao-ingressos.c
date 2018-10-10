@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <pthread.h>
 #include <stdbool.h>
 
@@ -66,7 +66,7 @@ int main(){
 
 	printf("%s",&ingressos[3]);
 
-/*
+
 	pthread_create(&emissor, 0, emitir, "");
 	pthread_create(&comprador1, 0, comprador, (void *)comp1);
 	pthread_create(&comprador2, 0, comprador, (void *)comp2);
@@ -79,5 +79,5 @@ int main(){
 	puts("Relação Poltrona / Comprador");
 	for(int i=0;i<30;i++){
 		printf("\n Poltrona: %d - Comprador: %d", i, ingressos[i]);
-	}*/
+	
 }
