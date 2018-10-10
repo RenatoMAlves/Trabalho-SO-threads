@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdbool.h>
+
 char ingressos[30];
 pthread_mutex_t ExcMutua=PTHREAD_MUTEX_INITIALIZER;
 
@@ -13,8 +14,9 @@ void *emitir(void *ingresso){
 	for(int i=0;i<30;i++){
 		pthread_mutex_lock(&ExcMutua);
 		ingressos[i]="e";
-		sleep(3);
 		pthread_mutex_unlock(&ExcMutua);
+		sleep(3);
+		puts("\nIngresso emitido");
 	}
 	pthread_exit(0);
 }
@@ -22,20 +24,25 @@ void *emitir(void *ingresso){
 void *comprador(void *comp){
 	int numero_comprador = ((struct Comprad*)comp)->num;
 	bool flag = false;
-	for(int i=0;i<30;i++){
-		pthread_mutex_lock(&ExcMutua);
-		if(ingressos[i]=="e"){
-			ingressos[i] = numero_comprador;
-			printf("\n Comprador: %d - Poltrona: %d", numero_comprador, i);
-			flag = true;
+	for(;;){
+		for(int i=0;i<30;i++){
+			printf("\n%s", ingressos[i]);
+			pthread_mutex_lock(&ExcMutua);
+			if(ingressos[i]=="e"){
+				puts("\nteste");
+				sprintf(ingressos[i], "%d", numero_comprador);
+				printf("\n Comprador: %d - Poltrona: %d", numero_comprador, i);
+				flag = true;
+			}
+			pthread_mutex_unlock(&ExcMutua);
 		}
-		pthread_mutex_unlock(&ExcMutua);
+		if(flag != true){
+			printf("\n%s Ainda não foram emitidos novos ingressos, por favor aguarde", ((struct Comprad*)comp)->nome);
+		}
+		sleep(1);
 	}
-	if(flag != true){
-		printf("\n%s Ainda não foram emitidos novos ingressos, por favor aguarde", ((struct Comprad*)comp)->nome);
-	}
-
-	if(ingressos[29] != "n"){
+	if(ingressos[29] != "n" || ingressos[29] != "e"){
+		puts("teste");
 		pthread_exit(0);
 	}
 }
@@ -43,21 +50,6 @@ void *comprador(void *comp){
 
 int main(){
 	pthread_t comprador1, comprador2, emissor;
-	/*
-	struct Comprad{
-		int num;
-		char nome[10];
-	};
-	
-	struct Comprador comp1;
-	struct Comprador comp2;
-
-	comp1.num = 1;
-	comp2.num = 2;
-
-	strcpy(comp1.nome, "Comprador 1");
-	strcpy(comp2.nome, "Comprador 2");
-	*/
 
 	struct Comprad *comp1 = (struct Comprad *)malloc(sizeof(struct Comprad));
 	strcpy(comp1->nome, "Comprador1");
@@ -72,6 +64,9 @@ int main(){
 		ingressos[i] = "n";
 	}
 
+	printf("%s",&ingressos[3]);
+
+/*
 	pthread_create(&emissor, 0, emitir, "");
 	pthread_create(&comprador1, 0, comprador, (void *)comp1);
 	pthread_create(&comprador2, 0, comprador, (void *)comp2);
@@ -84,5 +79,5 @@ int main(){
 	puts("Relação Poltrona / Comprador");
 	for(int i=0;i<30;i++){
 		printf("\n Poltrona: %d - Comprador: %d", i, ingressos[i]);
-	}
+	}*/
 }
