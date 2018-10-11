@@ -6,14 +6,14 @@ char ingressos[30];
 pthread_mutex_t ExcMutua=PTHREAD_MUTEX_INITIALIZER;
 
 struct Comprad{
-	int num;
+	char num;
 	char nome[10];
 };
 
 void *emitir(void *ingresso){
 	for(int i=0;i<30;i++){
 		pthread_mutex_lock(&ExcMutua);
-		ingressos[i]="e";
+		ingressos[i]='e';
 		pthread_mutex_unlock(&ExcMutua);
 		sleep(3);
 		puts("\nIngresso emitido");
@@ -22,16 +22,16 @@ void *emitir(void *ingresso){
 }
 
 void *comprador(void *comp){
-	int numero_comprador = ((struct Comprad*)comp)->num;
+	char numero_comprador = ((struct Comprad*)comp)->num;
 	bool flag = false;
 	for(;;){
 		for(int i=0;i<30;i++){
 			printf("\n%s", ingressos[i]);
 			pthread_mutex_lock(&ExcMutua);
-			if(ingressos[i]=="e"){
+			if(ingressos[i]=='e'){
 				puts("\nteste");
-				sprintf(ingressos[i], "%d", numero_comprador);
-				printf("\n Comprador: %d - Poltrona: %d", numero_comprador, i);
+				sprintf(ingressos[i], "%c", numero_comprador);
+				printf("\n Comprador: %c - Poltrona: %d", numero_comprador, i);
 				flag = true;
 			}
 			pthread_mutex_unlock(&ExcMutua);
@@ -41,7 +41,7 @@ void *comprador(void *comp){
 		}
 		sleep(1);
 	}
-	if(ingressos[29] != "n" || ingressos[29] != "e"){
+	if(strcmp(ingressos[29],'n') != 0 && strcmp(ingressos[29],'e') != 0){
 		puts("teste");
 		pthread_exit(0);
 	}
@@ -53,18 +53,16 @@ int main(){
 
 	struct Comprad *comp1 = (struct Comprad *)malloc(sizeof(struct Comprad));
 	strcpy(comp1->nome, "Comprador1");
-	comp1->num = 1;
+	comp1->num = '1';
 
 	struct Comprad *comp2 = (struct Comprad *)malloc(sizeof(struct Comprad));
 	strcpy(comp2->nome, "Comprador2");
-	comp2->num = 2;
+	comp2->num = '2';
 
 
 	for(int i=0;i<30;i++){
-		ingressos[i] = "n";
+		ingressos[i] = 'n';
 	}
-
-	printf("%s",&ingressos[3]);
 
 
 	pthread_create(&emissor, 0, emitir, "");
@@ -78,6 +76,6 @@ int main(){
 	printf("\n Os ingressos estão esgotados");
 	puts("Relação Poltrona / Comprador");
 	for(int i=0;i<30;i++){
-		printf("\n Poltrona: %d - Comprador: %d", i, ingressos[i]);
-	
+		printf("\n Poltrona: %d - Comprador: %d", i, ingressos[i]);	
+	}
 }
