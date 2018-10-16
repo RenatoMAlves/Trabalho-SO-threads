@@ -38,7 +38,6 @@ void *comprador(void *comp){
 			printf("\n%s Ainda não foram emitidos novos ingressos, por favor aguarde\n", ((struct Comprad*)comp)->nome);
 		}
 		if(ingressos[29] != 'n' && ingressos[29] != 'e'){
-			puts("teste");
 			pthread_exit(0);
 		}
 		flag = false;
